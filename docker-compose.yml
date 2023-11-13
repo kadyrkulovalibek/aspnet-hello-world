@@ -1,0 +1,13 @@
+version: '3'
+services:
+  app:
+    image: dotnet-7-app:latest
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - 8085:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app

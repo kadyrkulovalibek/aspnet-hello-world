@@ -1,0 +1,53 @@
+# Ignore Visual Studio files
+.vscode/
+.vs/
+bin/
+obj/
+
+# Ignore user-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Aa][Rr][Cc][Hh][Vv][Oo][Pp]/
+
+# Ignore NuGet packages
+packages/
+
+# Ignore build and publish directories
+/bin/
+/obj/
+/publish/
+
+# Ignore .NET Core build directories
+[Bb]in/
+[Oo]bj/
+
+# Ignore Visual Studio temporary files
+.vscode/
+.vscodeignore
+.vscodeignore.db
+
+# Ignore Rider directory
+.idea/
+
+# Ignore Rider, Visual Studio, and other IDE specific files
+*.[Rr]e[Ss]harper*
+*.[Vv][Ss]pscc
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+_ReSharper*/
+.vscode/
+.vs/
