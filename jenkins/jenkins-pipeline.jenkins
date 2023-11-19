@@ -45,8 +45,7 @@ pipeline {
         stage('Stop and Remove Existing Container') {
             steps {
                 script {
-                    sh "docker stop ${APPLICATION_NAME}"
-                    sh "docker rm ${APPLICATION_NAME}"
+                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${SERVER_USERNAME}@${SERVER_HOST} 'docker stop ${APPLICATION_NAME} && docker rm ${APPLICATION_NAME}'"
                 }
             }
         }
