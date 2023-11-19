@@ -14,6 +14,7 @@ pipeline {
         SERVER_HOST = "172.203.225.3"
         SERVER_DESTINATION_PATH = "~/"
         APPLICATION_NAME = "my-application"
+        BACKUP_FILENAME = "my-app-backup.tar.gz"
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
@@ -41,6 +42,13 @@ pipeline {
                 }
             }
         }
+        stage('Backup Artifacts') {
+            steps {
+                script {
+                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${SERVER_USERNAME}@${SERVER_HOST} 'cd ${SERVER_DESTINATION_PATH} && tar -czf ${BACKUP_FILENAME} *'"
+                }
+            }
+        }
         stage('Deploy and Run Application') {
             steps {
                 script {
@@ -49,6 +57,5 @@ pipeline {
                 }
             }
         }
-
     }
 }
