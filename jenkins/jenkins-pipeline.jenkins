@@ -5,7 +5,12 @@ properties([disableConcurrentBuilds()])
 pipeline {
     agent { 
         label 'master'
-        }
+    }
+    environment {
+        DOCKER_IMAGE_NAME = "my-app"
+        DOCKER_IMAGE_TAG = "latest"
+        ARCHIVE_FILENAME = "archived-my-app.tar.gz"
+    }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
         timestamps()
@@ -14,7 +19,12 @@ pipeline {
         stage("Build") {
             steps {
                 script {
-                    dockerImage = docker.build("my-app:latest")
+                    docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
+                }
+            }
+             steps {
+                script {
+                    sh "docker save -o ${ARCHIVE_FILENAME} ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
                 }
             }
         }
