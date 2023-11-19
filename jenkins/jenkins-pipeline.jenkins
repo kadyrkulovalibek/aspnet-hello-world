@@ -10,10 +10,15 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
         timestamps()
     }
+    properties {
+        
+    }
     stages {
-        stage("First step") {
+        stage("Build") {
             steps {
-                sh 'ssh root@my-server \'hostname\''
+                script {
+                    dockerImage = docker.build("my-app:latest")
+                }
             }
         }
         stage("Second step") {
