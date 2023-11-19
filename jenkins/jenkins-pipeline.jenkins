@@ -22,15 +22,12 @@ pipeline {
                     docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
                 }
             }
-             steps {
+        }
+        stage("Archive Docker Image") {
+            steps {
                 script {
                     sh "docker save -o ${ARCHIVE_FILENAME} ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
                 }
-            }
-        }
-        stage("Second step") {
-            steps {
-                sh 'ssh root@my-server \'uptime\''
             }
         }
     }
