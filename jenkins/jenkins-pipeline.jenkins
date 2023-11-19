@@ -12,7 +12,7 @@ pipeline {
         ARCHIVE_FILENAME = "archived-my-app.tar.gz"
         SERVER_USERNAME = "root"
         SERVER_HOST = "172.203.225.3"
-        SERVER_DESTINATION_PATH = "/"
+        SERVER_DESTINATION_PATH = "~/"
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
