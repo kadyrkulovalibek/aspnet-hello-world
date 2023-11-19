@@ -10,6 +10,9 @@ pipeline {
         DOCKER_IMAGE_NAME = "my-app"
         DOCKER_IMAGE_TAG = "latest"
         ARCHIVE_FILENAME = "archived-my-app.tar.gz"
+        SERVER_USERNAME = "root"
+        SERVER_HOST = "172.203.225.3"
+        SERVER_DESTINATION_PATH = "/"
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
@@ -27,6 +30,13 @@ pipeline {
             steps {
                 script {
                     sh "docker save -o ${ARCHIVE_FILENAME} ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                }
+            }
+        }
+        stage('Copy to Server') {
+            steps {
+                script {
+                    sh "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${ARCHIVE_FILENAME} ${SERVER_USERNAME}@${SERVER_HOST}:${SERVER_DESTINATION_PATH}"
                 }
             }
         }
