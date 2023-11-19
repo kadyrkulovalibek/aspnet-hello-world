@@ -49,6 +49,14 @@ pipeline {
                 }
             }
         }
+        stage('Stop and Remove Existing Container') {
+            steps {
+                script {
+                    sh "docker stop ${APPLICATION_NAME}"
+                    sh "docker rm ${APPLICATION_NAME}"
+                }
+            }
+        }
         stage('Deploy and Run Application') {
             steps {
                 script {
