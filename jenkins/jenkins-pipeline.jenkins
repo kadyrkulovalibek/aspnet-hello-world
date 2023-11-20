@@ -6,6 +6,9 @@ pipeline {
     agent { 
         label 'master'
     }
+    triggers {
+        pollSCM('*****')
+    }
     environment {
         DOCKER_IMAGE_NAME = "my-app"
         DOCKER_IMAGE_TAG = "latest"
@@ -36,6 +39,13 @@ pipeline {
                 }
             }
         }
+        stage('Backup Artifacts') {
+            steps {
+                script {
+                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@172.203.225.3 'cd ${SERVER_DESTINATION_PATH} && TIMESTAMP=\$(date +\"%Y%m%d_%H%M%S\") && tar -czf ${BACKUP_DESTINATION_PATH}/my-app-backup_\${TIMESTAMP}.tar.gz *'"
+                }
+            }
+        }
         stage('Copy to Server') {
             steps {
                 script {
@@ -54,13 +64,6 @@ pipeline {
             steps {
                 script {
                     sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${SERVER_USERNAME}@${SERVER_HOST} 'cd ${SERVER_DESTINATION_PATH} && docker load -i ${ARCHIVE_FILENAME} && docker run -d --name ${APPLICATION_NAME} -p 8080:8080 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'"
-                }
-            }
-        }
-        stage('Backup Artifacts') {
-            steps {
-                script {
-                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@172.203.225.3 'cd ${SERVER_DESTINATION_PATH} && TIMESTAMP=\$(date +\"%Y%m%d_%H%M%S\") && tar -czf ${BACKUP_DESTINATION_PATH}/my-app-backup_\${TIMESTAMP}.tar.gz *'"
                 }
             }
         }
