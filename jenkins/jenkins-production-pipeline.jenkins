@@ -1,0 +1,71 @@
+#!groovy
+properties([disableConcurrentBuilds()])
+
+pipeline {
+    agent { 
+        label 'master'
+    }
+    triggers {
+        pollSCM('* * * * *')
+    }
+    environment {
+        DOCKER_IMAGE_NAME = "my-app"
+        DOCKER_IMAGE_TAG = "latest"
+        ARCHIVE_FILENAME = "archived-my-app.tar.gz"
+        SERVER_USERNAME = "root"
+        SERVER_HOST = "172.203.225.3"
+        SERVER_DESTINATION_PATH = "~/production/app"
+        APPLICATION_NAME = "my-application"
+        BACKUP_FILENAME = "my-app-backup.tar.gz"
+        BACKUP_DESTINATION_PATH = "~/production/backups"
+        HOST_PORT="8085"
+    }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
+        timestamps()
+    }
+    stages {
+        stage("Build") {
+            steps {
+                script {
+                    docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
+                }
+            }
+        }
+        stage("Archive Docker Image") {
+            steps {
+                script {
+                    sh "docker save -o ${ARCHIVE_FILENAME} ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                }
+            }
+        }
+        stage('Backup Artifacts') {
+            steps {
+                script {
+                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@172.203.225.3 'cd ${SERVER_DESTINATION_PATH} && TIMESTAMP=\$(date +\"%Y%m%d_%H%M%S\") && tar -czf ${BACKUP_DESTINATION_PATH}/my-app-backup_\${TIMESTAMP}.tar.gz *'"
+                }
+            }
+        }
+        stage('Copy to Server') {
+            steps {
+                script {
+                    sh "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${ARCHIVE_FILENAME} ${SERVER_USERNAME}@${SERVER_HOST}:${SERVER_DESTINATION_PATH}"
+                }
+            }
+        }
+        stage('Stop and Remove Existing Container') {
+            steps {
+                script {
+                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${SERVER_USERNAME}@${SERVER_HOST} 'docker stop ${APPLICATION_NAME} && docker rm ${APPLICATION_NAME}'"
+                }
+            }
+        }
+        stage('Deploy and Run Application') {
+            steps {
+                script {
+                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${SERVER_USERNAME}@${SERVER_HOST} 'cd ${SERVER_DESTINATION_PATH} && docker load -i ${ARCHIVE_FILENAME} && docker run -d --name ${APPLICATION_NAME} -p ${HOST_PORT}:8085 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'"
+                }
+            }
+        }
+    }
+}
