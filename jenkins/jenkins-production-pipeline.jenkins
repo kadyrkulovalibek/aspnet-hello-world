@@ -12,7 +12,7 @@ pipeline {
         SERVER_USERNAME = "root"
         SERVER_HOST = "172.203.225.3"
         SERVER_DESTINATION_PATH = "~/production/app"
-        APPLICATION_NAME = "my-application"
+        APPLICATION_NAME = "my-production-application"
         BACKUP_FILENAME = "my-app-backup.tar.gz"
         BACKUP_DESTINATION_PATH = "~/production/backups"
         HOST_PORT="8085"
