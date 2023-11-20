@@ -60,7 +60,7 @@ pipeline {
         stage('Backup Artifacts') {
             steps {
                 script {
-                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@172.203.225.3 'cd ~/ && TIMESTAMP=\$(date +\"%Y%m%d_%H%M%S\") && tar -czf ${BACKUP_DESTINATION_PATH}/my-app-backup_\${TIMESTAMP}.tar.gz *'"
+                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@172.203.225.3 'cd ${SERVER_DESTINATION_PATH} && TIMESTAMP=\$(date +\"%Y%m%d_%H%M%S\") && tar -czf ${BACKUP_DESTINATION_PATH}/my-app-backup_\${TIMESTAMP}.tar.gz *'"
                 }
             }
         }
