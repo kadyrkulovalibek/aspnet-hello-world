@@ -7,7 +7,7 @@ pipeline {
         label 'master'
     }
     triggers {
-        pollSCM('*****')
+        pollSCM('* * * * *')
     }
     environment {
         DOCKER_IMAGE_NAME = "my-app"
