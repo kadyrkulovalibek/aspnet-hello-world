@@ -12,9 +12,10 @@ pipeline {
         ARCHIVE_FILENAME = "archived-my-app.tar.gz"
         SERVER_USERNAME = "root"
         SERVER_HOST = "172.203.225.3"
-        SERVER_DESTINATION_PATH = "~/"
+        SERVER_DESTINATION_PATH = "~/app"
         APPLICATION_NAME = "my-application"
         BACKUP_FILENAME = "my-app-backup.tar.gz"
+        BACKUP_DESTINATION_PATH = "~/backups"
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
@@ -52,7 +53,6 @@ pipeline {
         stage('Deploy and Run Application') {
             steps {
                 script {
-                    // SSH into the server and deploy the Docker image
                     sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${SERVER_USERNAME}@${SERVER_HOST} 'cd ${SERVER_DESTINATION_PATH} && docker load -i ${ARCHIVE_FILENAME} && docker run -d --name ${APPLICATION_NAME} -p 8080:8080 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'"
                 }
             }
@@ -60,7 +60,7 @@ pipeline {
         stage('Backup Artifacts') {
             steps {
                 script {
-                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${SERVER_USERNAME}@${SERVER_HOST} 'cd ${SERVER_DESTINATION_PATH} && tar -czf ${BACKUP_FILENAME} *'"
+                    sh "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@172.203.225.3 'cd ~/ && TIMESTAMP=$(date +"%Y%m%d_%H%M%S") && tar -czf ${BACKUP_DESTINATION_PATH}/my-app-backup_${TIMESTAMP}.tar.gz *'"
                 }
             }
         }
