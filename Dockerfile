@@ -1,4 +1,4 @@
-#Dockerfile fro the application
+#Dockerfile
 FROM ubuntu:22.04 AS builder
 
 RUN apt-get update && apt-get install -y dotnet7 ca-certificates
