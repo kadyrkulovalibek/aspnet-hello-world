@@ -10,7 +10,7 @@ pipeline {
         DOCKER_IMAGE_TAG = "latest"
         ARCHIVE_FILENAME = "archived-my-app.tar.gz"
         SERVER_USERNAME = "root"
-        SERVER_HOST = "172.203.225.3"
+        SERVER_HOST = "172.187.131.126"
         SERVER_DESTINATION_PATH = "~/production/app"
         APPLICATION_NAME = "my-production-application"
         BACKUP_FILENAME = "my-app-backup.tar.gz"
